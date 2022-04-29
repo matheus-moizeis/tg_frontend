@@ -1,5 +1,7 @@
 export default {
   user: {
-    nome: 'Matheus'
+    data: {},
+    status: null
   }
+
 }
