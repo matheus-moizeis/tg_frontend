@@ -3,6 +3,7 @@
     <div class="q-pa-lg login-container col-4">
       <h1 class="text-h4 q-mb-xl items-center text-center">
         Cadastro de Usuário
+
       </h1>
       <div>
         <q-form ref="createUser" @submit="onSubmit" class="q-gutter-md">
@@ -52,6 +53,7 @@
 </template>
 
 <script>
+
 import { mapActions } from 'vuex'
 export default {
   name: 'CreateUser',
@@ -67,8 +69,7 @@ export default {
     ...mapActions('auth', ['createUser']),
 
     async onSubmit () {
-      const user = await this.createUser({ nome: this.nome, email: this.email, password: this.password })
-      console.log(user.data)
+      this.createUser({ nome: this.nome, email: this.email, password: this.password })
     }
   },
 

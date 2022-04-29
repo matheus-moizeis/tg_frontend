@@ -1,3 +1,5 @@
 export default {
-  user: {}
+  user: {
+    nome: 'Matheus'
+  }
 }
