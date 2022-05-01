@@ -74,7 +74,8 @@ export default {
             type: 'negative',
             position: 'top',
             avatar: true,
-            timeout: 500,
+            icon: 'cancel',
+            timeout: 1000,
             message: error.response.data.errors
           })
           this.onReset()
