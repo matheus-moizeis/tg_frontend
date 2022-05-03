@@ -1,5 +1,8 @@
 <template>
   <q-page>
+    <div class="row q-ml-sm q-mt-md">
+      <div class="q-ml-md q-mt-md text-h4">Tickets</div>
+    </div>
     <div class="q-pa-md">
       <q-table
         grid
@@ -102,8 +105,6 @@ export default {
       } catch (error) {
         console.log(error)
       }
-
-      api.get('/tickets')
     },
 
     async callDialog (env, row) {

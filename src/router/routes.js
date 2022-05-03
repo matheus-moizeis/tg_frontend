@@ -18,6 +18,13 @@ const routes = [
       { path: 'new', name: 'CreateUser', component: () => import('pages/CreateUser') }
     ]
   },
+  {
+    path: '/customer',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: 'createCustomer', name: 'CreateCustomer', component: () => import('pages/Customer/CreateCustomer.vue') }
+    ]
+  },
 
   // Always leave this as last one,
   // but you can also remove it
