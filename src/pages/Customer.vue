@@ -36,11 +36,11 @@
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
             <q-btn
-             icon="create"
-             color="primary"
-             size="sm"
-             @click="popUpUpdate(props.row)"
-             />
+              icon="create"
+              color="primary"
+              @click="popUpUpdate(props.row.id)"
+              size="sm"
+            />
             <q-btn
               icon="delete"
               color="negative"
@@ -78,94 +78,103 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-    </div>
-    <div>
-      <q-dialog v-model="confirUpdate" persistent>
-        <q-card style="width: 700px; max-width: 80vw;">
-        <q-card-section>
-          <div class="text-h6">Editar Cliente</div>
-        </q-card-section>
-    <div class="container">
 
-      <q-form ref="customerForm">
-        <div class="row justify-center q-gutter-sm">
-          <q-input
-            outlined
-            v-model="updateData.nome"
-            label="Nome"
-            class="col-sm-12 col-md-5 col-lg-5"
-          />
-          <q-input
-            outlined
-            v-model="updateData.cpf"
-            mask="###.###.###-##"
-            unmasked-value
-            label="CPF"
-            class="col-sm-12 col-md-5 col-lg-5"
-          />
-          <q-input
-            outlined
-            v-model="updateData.dt_nascimento"
-            stack-label
-            type="date"
-            label="Nascimento"
-            class="col-sm-12 col-md-5 col-lg-5"
-          />
-          <q-input
-            outlined
-            v-model="updateData.telefone"
-            label="Celular"
-            mask="(##) #####-####"
-            unmasked-value
-            class="col-sm-12 col-md-5 col-lg-5"
-          />
-          <q-input
-            outlined
-            v-model="updateData.cep"
-            label="CEP"
-            mask="#####-###"
-            unmasked-value
-            class="col-sm-12 col-md-5 col-lg-5"
-          />
-          <q-input
-            outlined
-            v-model="updateData.rua"
-            label="Rua"
-            class="col-sm-12 col-md-5 col-lg-5"
-          />
+      <q-dialog v-model="updateInfo.open" persistent>
+        <q-card style="width: 700px; max-width: 80vw">
+          <q-card-section>
+            <div class="text-h6">Editar Cliente</div>
+          </q-card-section>
 
-          <q-input
-            outlined
-            v-model="updateData.bairro"
-            label="Bairro"
-            class="col-sm-12 col-md-5 col-lg-5"
-          />
-          <q-input
-            outlined
-            v-model="updateData.numero"
-            label="Nº"
-            class="col-sm-12 col-md-5 col-lg-5"
-          />
-        </div>
-      </q-form>
-    </div>
+          <q-card-section class="q-pt-none"> </q-card-section>
+          <q-form ref="customerForm" @submit="onSubmit">
+            <div class="row justify-center q-gutter-sm">
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.id"
+                label="Id"
+                disable
+                readonly
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.nome"
+                label="Nome"
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.cpf"
+                mask="###.###.###-##"
+                unmasked-value
+                label="CPF"
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.dt_nascimento"
+                stack-label
+                type="date"
+                label="Nascimento"
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.telefone"
+                label="Celular"
+                mask="(##) #####-####"
+                unmasked-value
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.cep"
+                label="CEP"
+                mask="#####-###"
+                unmasked-value
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.rua"
+                label="Rua"
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
 
-          <q-card-actions align="right">
-            <q-btn
-              flat
-              label="Cancelar"
-              @click="loading = false"
-              color="primary"
-              v-close-popup
-            />
-            <q-btn
-              flat
-              label="Confirmar"
-              color="positive"
-              @click="updateCustomer"
-              v-close-popup
-            />
-          </q-card-actions>
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.bairro"
+                label="Bairro"
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+              <q-input
+                outlined
+                v-model="updateInfo.customerData.numero"
+                label="Nº"
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+              <q-toggle
+                v-model="updateInfo.customerData.ativo"
+                label="Ativo"
+                class="col-sm-12 col-md-5 col-lg-5"
+              />
+            </div>
+
+            <q-card-actions align="right" class="text-teal">
+              <q-btn
+                color="positive"
+                type="submit"
+                label="Salvar"
+                v-close-popup
+              />
+              <q-btn
+                color="grey-8"
+                label="Voltar"
+                @click="loading = false"
+                v-close-popup
+              />
+            </q-card-actions>
+          </q-form>
         </q-card>
       </q-dialog>
     </div>
@@ -178,16 +187,10 @@ export default {
   name: 'CustomerPage',
   data () {
     return {
-      updateData: {
-        nome: null,
-        cpf: null,
-        telefone: null,
-        dt_nascimento: null,
-        rua: null,
-        bairro: null,
-        cep: null,
-        numero: null,
-        ativo: true
+      updateInfo: {
+        open: false,
+        idCustomer: null,
+        customerData: {}
       },
       idCustomer: null,
       loading: false,
@@ -227,16 +230,55 @@ export default {
   },
 
   methods: {
-    async updateCustomer () {
-      console.log('entro' + this.oldCustomer.nome)
-      await this.getClientes()
-      this.loading = false
+    async onSubmit () {
+      const token = await this.getToken()
+
+      try {
+        const { status } = await api.put(`/clientes/${this.updateInfo.idCustomer}`,
+          {
+            nome: this.updateInfo.customerData.nome,
+            cpf: parseInt(this.updateInfo.customerData.cpf),
+            telefone: this.updateInfo.customerData.telefone,
+            dt_nascimento: this.updateInfo.customerData.dt_nascimento,
+            rua: this.updateInfo.customerData.rua,
+            bairro: this.updateInfo.customerData.bairro,
+            cep: this.updateInfo.customerData.cep,
+            numero: this.updateInfo.customerData.numero,
+            ativo: this.updateInfo.customerData.ativo
+          },
+          {
+            headers: { Authorization: token }
+          })
+        if (status === 200) {
+          this.$q.notify({
+            position: 'top-right',
+            icon: 'check_circle_outline',
+            type: 'positive',
+            message: 'Registro atualizado com sucesso!'
+          })
+          this.clientes = []
+          await this.getClientes()
+          this.loading = false
+        }
+      } catch (error) {
+        console.log(error)
+        this.loading = false
+      }
     },
 
-    popUpUpdate (updateData) {
-      this.confirUpdate = true
+    async popUpUpdate (id) {
+      this.updateInfo.idCustomer = id
       this.loading = true
-      this.oldCustomer.nome = updateData.nome
+      const token = await this.getToken()
+      try {
+        const { status, data } = await api.get(`/clientes/${id}`, {
+          headers: { Authorization: token }
+        })
+        if (status === 200) {
+          this.updateInfo.customerData = data
+        }
+      } catch (error) {}
+      this.updateInfo.open = true
     },
 
     async deleteCustomer () {

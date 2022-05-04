@@ -67,7 +67,7 @@
         <div class="row q-pl-md q-mt-xl">
           <div class="q-gutter-md">
             <q-btn label="Salvar" color="positive" type="submit" />
-            <q-btn label="Voltar" color="grey-8" :to="{ name: 'customer' }" />
+            <q-btn label="Voltar" color="grey-8" @click="returnCreate" />
           </div>
         </div>
       </q-form>
@@ -94,6 +94,10 @@ export default {
     }
   },
   methods: {
+
+    returnCreate () {
+      this.$router.push({ name: 'Customer' })
+    },
     async onSubmit () {
       const token = await this.getToken()
       try {
