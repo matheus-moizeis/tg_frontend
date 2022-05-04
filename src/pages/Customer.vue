@@ -5,7 +5,6 @@
     </div>
     <div class="q-pa-md">
       <q-table
-        title="Treats"
         :data="clientes"
         :columns="columns"
         row-key="id"
