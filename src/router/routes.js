@@ -6,7 +6,7 @@ const routes = [
     children: [
       { path: '', component: () => import('pages/Index.vue') },
       { path: 'customer', name: 'Customer', component: () => import('pages/Customer.vue') },
-      { path: 'ticket', name: 'Ticket', component: () => import('pages/Ticket.vue') },
+      { path: 'ticket', name: 'Ticket', component: () => import('pages/Ticket/Ticket.vue') },
       { path: 'employee', name: 'Employee', component: () => import('pages/Employee.vue') }
     ]
   },
@@ -30,6 +30,13 @@ const routes = [
     component: () => import('layouts/MainLayout.vue'),
     children: [
       { path: 'new', name: 'CreateEmployee', component: () => import('pages/Employee/CreateEmployee.vue') }
+    ]
+  },
+  {
+    path: '/ticket',
+    component: () => import('layouts/MainLayout.vue'),
+    children: [
+      { path: 'new', name: 'CreateTicket', component: () => import('pages/Ticket/CreateTicket.vue') }
     ]
   },
 

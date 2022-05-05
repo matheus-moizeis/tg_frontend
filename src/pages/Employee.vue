@@ -3,7 +3,7 @@
     <div class="row q-ml-sm q-mt-md">
       <div class="q-ml-md q-mt-md text-h4">Funcionários</div>
     </div>
-        <div class="q-pa-md">
+    <div class="q-pa-md">
       <q-table
         :data="employees"
         :columns="columns"
@@ -51,7 +51,7 @@
         </template>
       </q-table>
     </div>
-      <div>
+    <div>
       <q-dialog v-model="confirmDelete" persistent>
         <q-card>
           <q-card-section class="row items-center">
@@ -77,7 +77,7 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-            <q-dialog v-model="dialogUpdate" persistent>
+      <q-dialog v-model="dialogUpdate" persistent>
         <q-card style="width: 700px; max-width: 80vw">
           <q-card-section>
             <div class="text-h6">Editar Cliente</div>
@@ -134,7 +134,7 @@
           </q-form>
         </q-card>
       </q-dialog>
-      </div>
+    </div>
   </q-page>
 </template>
 
@@ -181,15 +181,16 @@ export default {
     }
   },
   methods: {
-
     async putEmployee () {
       const token = await this.getToken()
       try {
-        const { status } = await api.put(`/funcionarios/${this.emplyoeeUpdate.id}`,
+        const { status } = await api.put(
+          `/funcionarios/${this.emplyoeeUpdate.id}`,
           this.emplyoeeUpdate,
           {
             headers: { Authorization: token }
-          })
+          }
+        )
         if (status === 200) {
           this.$q.notify({
             position: 'top-right',
@@ -257,9 +258,7 @@ export default {
           headers: { Authorization: token }
         })
         this.employees = data
-      } catch (error) {
-
-      }
+      } catch (error) {}
     },
 
     async getToken () {
