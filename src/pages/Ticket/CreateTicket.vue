@@ -20,7 +20,7 @@
           <q-select
             outlined
             v-model="newTicket.funcionario_id"
-            :options="customers"
+            :options="employees"
             label="Funcionário"
             class="col-sm-12 col-md-5 col-lg-5"
             emit-value
