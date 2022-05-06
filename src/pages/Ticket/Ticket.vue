@@ -3,6 +3,18 @@
     <div class="row q-ml-sm q-mt-md">
       <div class="q-ml-md q-mt-md text-h4">Tickets</div>
     </div>
+    <div class="row q-ml-sm q-mt-md">
+      <q-select
+      outlined
+      v-model="typySelect"
+      :options="optionsSelect"
+      label="Mostrar"
+      class="col-3"
+      emit-value
+      map-options
+      @change="getTickets()"
+      />
+    </div>
     <div class="q-pa-md">
       <q-table
         :data="tickets"
@@ -22,6 +34,7 @@
             v-model="filter"
             placeholder="Buscar"
           >
+
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -166,6 +179,21 @@ export default {
   name: 'TicketPage',
   data () {
     return {
+      typySelect: '/open',
+      optionsSelect: [
+        {
+          label: 'Todos',
+          value: '/'
+        },
+        {
+          label: 'Abertos',
+          value: '/open'
+        },
+        {
+          label: 'Finalizados',
+          value: '/finished'
+        }
+      ],
       dialogUpdate: false,
       ticketUpdate: {},
       confirmDelete: false,
@@ -302,7 +330,7 @@ export default {
     async getTickets () {
       const token = await this.getToken()
       try {
-        const { data } = await api.get('/tickets', {
+        const { data } = await api.get(`/tickets${this.typySelect}`, {
           headers: { Authorization: token }
         })
         this.tickets = data
@@ -310,6 +338,11 @@ export default {
     },
     async getToken () {
       return await localStorage.getItem('token')
+    }
+  },
+  watch: {
+    typySelect () {
+      this.getTickets()
     }
   },
   async mounted () {
