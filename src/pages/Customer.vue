@@ -3,6 +3,17 @@
     <div class="row q-ml-sm q-mt-md">
       <div class="q-ml-md q-mt-md text-h4">Clientes</div>
     </div>
+    <div class="row q-ml-sm q-mt-md">
+      <q-select
+        outlined
+        v-model="typySelect"
+        :options="optionsSelect"
+        label="Mostrar"
+        class="col-3"
+        emit-value
+        map-options
+      />
+    </div>
     <div class="q-pa-md">
       <q-table
         :data="clientes"
@@ -111,12 +122,31 @@
               />
               <q-input
                 outlined
-                v-model="updateInfo.customerData.dt_nascimento"
-                stack-label
-                type="date"
-                label="Nascimento"
+                v-model="dtNoFormated"
+                label="Dt. Nascimento"
                 class="col-sm-12 col-md-5 col-lg-5"
-              />
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      ref="qDateProxy"
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date mask="DD/MM/YYYY" v-model="dtNoFormated">
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Fechar"
+                            color="primary"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
               <q-input
                 outlined
                 v-model="updateInfo.customerData.telefone"
@@ -158,7 +188,6 @@
                 class="col-sm-12 col-md-5 col-lg-5"
               />
             </div>
-
             <q-card-actions align="right" class="text-teal">
               <q-btn
                 color="positive"
@@ -182,10 +211,28 @@
 
 <script>
 import { api } from 'boot/axios'
+import moment from 'moment'
 export default {
   name: 'CustomerPage',
   data () {
     return {
+      dtNoFormated: '',
+      dtFormated: '',
+      typySelect: '',
+      optionsSelect: [
+        {
+          label: 'Ativos',
+          value: ''
+        },
+        {
+          label: 'Desativados',
+          value: '/noactive'
+        },
+        {
+          label: 'Todos',
+          value: '/all'
+        }
+      ],
       updateInfo: {
         open: false,
         idCustomer: null,
@@ -231,14 +278,14 @@ export default {
   methods: {
     async onSubmit () {
       const token = await this.getToken()
-
       try {
-        const { status } = await api.put(`/clientes/${this.updateInfo.idCustomer}`,
+        const { status } = await api.put(
+          `/clientes/${this.updateInfo.idCustomer}`,
           {
             nome: this.updateInfo.customerData.nome,
             cpf: parseInt(this.updateInfo.customerData.cpf),
             telefone: this.updateInfo.customerData.telefone,
-            dt_nascimento: this.updateInfo.customerData.dt_nascimento,
+            dt_nascimento: this.dtFormated,
             rua: this.updateInfo.customerData.rua,
             bairro: this.updateInfo.customerData.bairro,
             cep: this.updateInfo.customerData.cep,
@@ -247,7 +294,8 @@ export default {
           },
           {
             headers: { Authorization: token }
-          })
+          }
+        )
         if (status === 200) {
           this.$q.notify({
             position: 'top-right',
@@ -274,7 +322,18 @@ export default {
           headers: { Authorization: token }
         })
         if (status === 200) {
-          this.updateInfo.customerData = data
+          this.updateInfo.customerData = {
+            id: data.id,
+            nome: data.nome,
+            cpf: data.cpf,
+            telefone: data.telefone,
+            rua: data.rua,
+            bairro: data.bairro,
+            cep: data.cep,
+            numero: data.numero,
+            ativo: data.ativo
+          }
+          this.dtNoFormated = moment(data.dt_nascimento).format('DD/MM/YYYY')
         }
       } catch (error) {}
       this.updateInfo.open = true
@@ -320,7 +379,7 @@ export default {
     async getClientes () {
       const token = await this.getToken()
       try {
-        const { data } = await api.get('/clientes', {
+        const { data } = await api.get(`/clientes${this.typySelect}`, {
           headers: { Authorization: token }
         })
         this.clientes = data
@@ -331,8 +390,28 @@ export default {
 
     async getToken () {
       return await localStorage.getItem('token')
+    },
+    async formatedDate (date) {
+      const arrDateNew = date.split('/')
+      const stringFormat =
+        arrDateNew[1] + '-' + arrDateNew[0] + '-' + arrDateNew[2]
+      return stringFormat
     }
   },
+
+  watch: {
+    typySelect () {
+      this.getClientes()
+    },
+    dtNoFormated () {
+      const dateErr = this.dtNoFormated
+      const arrDateNew = dateErr.split('/')
+      const stringFormat =
+        arrDateNew[1] + '-' + arrDateNew[0] + '-' + arrDateNew[2]
+      this.dtFormated = stringFormat
+    }
+  },
+
   async mounted () {
     await this.getClientes()
   }

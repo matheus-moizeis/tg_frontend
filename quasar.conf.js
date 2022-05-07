@@ -83,7 +83,7 @@ module.exports = function (/* ctx */) {
     // https://v1.quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
     framework: {
       iconSet: 'material-icons', // Quasar icon set
-      lang: 'pt-br', // Quasar language pack
+      lang: 'pt-BR', // Quasar language pack
       config: {
         brand: {
           primary: '#004080'

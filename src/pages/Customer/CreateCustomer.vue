@@ -22,12 +22,26 @@
           />
           <q-input
             outlined
-            v-model="newCustomer.dt_nascimento"
-            stack-label
-            type="date"
-            label="Nascimento"
+            v-model="dtNoFormated"
+            label="Dt. Nascimento"
             class="col-sm-12 col-md-5 col-lg-5"
-          />
+          >
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy
+                  ref="qDateProxy"
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date mask="DD/MM/YYYY" v-model="dtNoFormated">
+                    <div class="row items-center justify-end">
+                      <q-btn v-close-popup label="Fechar" color="primary" flat />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
           <q-input
             outlined
             v-model="newCustomer.telefone"
@@ -81,11 +95,12 @@ export default {
   name: 'CreateCustomer',
   data () {
     return {
+      dtNoFormated: '',
+      dtFormated: '',
       newCustomer: {
         nome: null,
         cpf: null,
         telefone: null,
-        dt_nascimento: null,
         rua: null,
         bairro: null,
         cep: null,
@@ -107,7 +122,7 @@ export default {
             nome: this.newCustomer.nome,
             cpf: parseInt(this.newCustomer.cpf),
             telefone: this.newCustomer.telefone,
-            dt_nascimento: this.newCustomer.dt_nascimento,
+            dt_nascimento: this.dtFormated,
             rua: this.newCustomer.rua,
             bairro: this.newCustomer.bairro,
             cep: this.newCustomer.cep,
@@ -147,6 +162,13 @@ export default {
 
     async getToken () {
       return await localStorage.getItem('token')
+    }
+  },
+  watch: {
+    dtNoFormated () {
+      const arrDateNew = this.dtNoFormated.split('/')
+      const stringFormat = arrDateNew[1] + '-' + arrDateNew[0] + '-' + arrDateNew[2]
+      this.dtFormated = stringFormat
     }
   }
 }

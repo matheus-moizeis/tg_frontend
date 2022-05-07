@@ -5,14 +5,13 @@
     </div>
     <div class="row q-ml-sm q-mt-md">
       <q-select
-      outlined
-      v-model="typySelect"
-      :options="optionsSelect"
-      label="Mostrar"
-      class="col-3"
-      emit-value
-      map-options
-      @change="getTickets()"
+        outlined
+        v-model="typySelect"
+        :options="optionsSelect"
+        label="Mostrar"
+        class="col-3"
+        emit-value
+        map-options
       />
     </div>
     <div class="q-pa-md">
@@ -34,7 +33,6 @@
             v-model="filter"
             placeholder="Buscar"
           >
-
             <template v-slot:append>
               <q-icon name="search" />
             </template>
@@ -127,11 +125,33 @@
               <q-input
                 outlined
                 v-model="ticketUpdate.dt_retorno"
-                stack-label
-                type="date"
                 label="Retorno"
                 class="col-sm-12 col-md-5 col-lg-5"
-              />
+              >
+                <template v-slot:append>
+                  <q-icon name="event" class="cursor-pointer">
+                    <q-popup-proxy
+                      ref="qDateProxy"
+                      transition-show="scale"
+                      transition-hide="scale"
+                    >
+                      <q-date
+                        mask="DD/MM/YYYY"
+                        v-model="ticketUpdate.dt_retorno"
+                      >
+                        <div class="row items-center justify-end">
+                          <q-btn
+                            v-close-popup
+                            label="Fechar"
+                            color="primary"
+                            flat
+                          />
+                        </div>
+                      </q-date>
+                    </q-popup-proxy>
+                  </q-icon>
+                </template>
+              </q-input>
               <q-input
                 outlined
                 v-model="ticketUpdate.titulo"
@@ -175,6 +195,7 @@
 
 <script>
 import { api } from 'boot/axios'
+import moment from 'moment'
 export default {
   name: 'TicketPage',
   data () {
@@ -235,7 +256,7 @@ export default {
           name: 'dt_retorno',
           align: 'center',
           label: 'Retorno',
-          field: 'dt_retorno',
+          field: (row) => moment(row.dt_retorno).format('DD/MM/YYYY'),
           sortable: true
         },
         {
@@ -253,7 +274,7 @@ export default {
           {
             titulo: this.ticketUpdate.titulo,
             descricao: this.ticketUpdate.descricao,
-            dt_retorno: this.ticketUpdate.dt_retorno,
+            dt_retorno: await this.formatedDate(this.ticketUpdate.dt_retorno),
             finalizado: this.ticketUpdate.finalizado
           },
           {
@@ -288,7 +309,7 @@ export default {
         id: parseInt(ticketUpdate.id),
         customer: ticketUpdate.Cliente.nome,
         employee: ticketUpdate.Funcionario.nome,
-        dt_retorno: ticketUpdate.dt_retorno,
+        dt_retorno: moment(ticketUpdate.dt_retorno).format('DD/MM/YYYY'),
         titulo: ticketUpdate.titulo,
         descricao: ticketUpdate.descricao,
         finalizado: ticketUpdate.finalizado
@@ -338,6 +359,12 @@ export default {
     },
     async getToken () {
       return await localStorage.getItem('token')
+    },
+    async formatedDate (date) {
+      const arrDateNew = date.split('/')
+      const stringFormat =
+        arrDateNew[1] + '-' + arrDateNew[0] + '-' + arrDateNew[2]
+      return stringFormat
     }
   },
   watch: {

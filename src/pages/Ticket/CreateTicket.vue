@@ -30,12 +30,31 @@
           />
           <q-input
             outlined
-            v-model="newTicket.dt_retorno"
-            stack-label
-            type="date"
+            v-model="dtNoFormated"
             label="Retorno"
             class="col-sm-12 col-md-5 col-lg-5"
-          />
+          >
+            <template v-slot:append>
+              <q-icon name="event" class="cursor-pointer">
+                <q-popup-proxy
+                  ref="qDateProxy"
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <q-date mask="DD/MM/YYYY" v-model="dtNoFormated">
+                    <div class="row items-center justify-end">
+                      <q-btn
+                        v-close-popup
+                        label="Fechar"
+                        color="primary"
+                        flat
+                      />
+                    </div>
+                  </q-date>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
           <q-input
             outlined
             v-model="newTicket.titulo"
@@ -66,6 +85,8 @@ export default {
   name: 'CreateTickt',
   data () {
     return {
+      dtNoFormated: '',
+      dtFormated: '',
       customers: [],
       employees: [],
       newTicket: {
@@ -86,7 +107,7 @@ export default {
           {
             titulo: this.newTicket.titulo,
             descricao: this.newTicket.descricao,
-            dt_retorno: this.newTicket.dt_retorno,
+            dt_retorno: this.dtFormated,
             cliente_id: parseInt(this.newTicket.cliente_id),
             funcionario_id: parseInt(this.newTicket.funcionario_id)
           },
@@ -139,6 +160,14 @@ export default {
     },
     async getToken () {
       return await localStorage.getItem('token')
+    }
+  },
+  watch: {
+    dtNoFormated () {
+      const arrDateNew = this.dtNoFormated.split('/')
+      const stringFormat =
+        arrDateNew[1] + '-' + arrDateNew[0] + '-' + arrDateNew[2]
+      this.dtFormated = stringFormat
     }
   },
   async mounted () {
