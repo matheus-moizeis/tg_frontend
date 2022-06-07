@@ -40,7 +40,6 @@
 
 <script>
 import { api } from 'boot/axios'
-import { QSpinnerGears } from 'quasar'
 
 export default {
   name: 'LoginPage',
@@ -60,12 +59,6 @@ export default {
         password: this.formData.password
       })
         .then(response => {
-          this.$q.notify({
-            spinner: QSpinnerGears,
-            timeout: 1000,
-            message: 'Carregando...',
-            position: 'center'
-          })
           this.setToken(response.data.token)
           this.$router.push({ name: 'Ticket' })
         })

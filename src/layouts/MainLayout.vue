@@ -21,7 +21,7 @@
             <q-list>
               <q-item clickable v-close-popup >
                 <q-item-section>
-                  <q-item-label>Sair</q-item-label>
+                  <q-item-label @click="sairDoSistema">Sair</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -87,6 +87,13 @@ export default {
     return {
       leftDrawerOpen: false,
       essentialLinks: linksData
+    }
+  },
+
+  methods: {
+    sairDoSistema () {
+      localStorage.setItem('token', '')
+      this.$router.push({ name: 'Login' })
     }
   }
 }
